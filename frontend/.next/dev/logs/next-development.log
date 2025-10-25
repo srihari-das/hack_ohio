@@ -8475,3 +8475,4 @@ Import traces:
     ./src/app/listen/page.js [Server Component]
 
 https://nextjs.org/docs/messages/module-not-found
+[01:12:57.208] Server  LOG      ✓ Compiled in 46ms
