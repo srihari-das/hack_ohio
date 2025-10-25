@@ -1,0 +1,84 @@
+[00:00:00.341] Server  LOG      ✓ Ready in 209ms
+[00:00:04.617] Server  ERROR    ⨯ ./src/app/page.js:16:2
+Parsing ecmascript source code failed
+  14 |       <Homepage />
+  15 |       <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
+> 16 | <<<<<<< HEAD
+     |  ^^
+  17 |         <GraduateDuckButton />
+  18 | =======
+  19 |         <Link href="/quacking">
+
+Expression expected
+
+
+
+./src/app/page.js:16:4
+Parsing ecmascript source code failed
+  14 |       <Homepage />
+  15 |       <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
+> 16 | <<<<<<< HEAD
+     |    ^^
+  17 |         <GraduateDuckButton />
+  18 | =======
+  19 |         <Link href="/quacking">
+
+Expression expected
+
+
+[00:00:05.130] Browser ERROR   uncaughtError: Error: ./src/app/page.js:16:4
+Parsing ecmascript source code failed
+  14 |       <Homepage />
+  15 |       <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
+> 16 | <<<<<<< HEAD
+     |    ^^
+  17 |         <GraduateDuckButton />
+  18 | =======
+  19 |         <Link href="/quacking">
+
+Expression expected
+
+
+[00:00:05.315] Browser ERROR   ./src/app/page.js:16:4
+Parsing ecmascript source code failed
+  14 |       <Homepage />
+  15 |       <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
+> 16 | <<<<<<< HEAD
+     |    ^^
+  17 |         <GraduateDuckButton />
+  18 | =======
+  19 |         <Link href="/quacking">
+
+Expression expected
+[00:00:05.315] Browser ERROR   ./src/app/page.js:16:4
+Parsing ecmascript source code failed
+  14 |       <Homepage />
+  15 |       <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
+> 16 | <<<<<<< HEAD
+     |    ^^
+  17 |         <GraduateDuckButton />
+  18 | =======
+  19 |         <Link href="/quacking">
+
+Expression expected
+[00:00:05.470] Browser ERROR   ./src/app/page.js:16:4
+Parsing ecmascript source code failed
+  14 |       <Homepage />
+  15 |       <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
+> 16 | <<<<<<< HEAD
+     |    ^^
+  17 |         <GraduateDuckButton />
+  18 | =======
+  19 |         <Link href="/quacking">
+
+Expression expected
+[00:00:24.898] Server  LOG      ✓ Compiled in 505ms
+[00:00:40.238] Browser ERROR   Error: {}
+[00:02:38.646] Server  LOG      ✓ Compiled in 114ms
+[00:02:51.134] Server  LOG      ✓ Compiled in 26ms
+[00:02:58.640] Server  ERROR   (node:10330) [DEP0060] DeprecationWarning: The `util._extend` API is deprecated. Please use Object.assign() instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+[00:07:07.230] Server  LOG      ✓ Compiled in 90ms
+[00:08:21.122] Browser ERROR   Error: {}
+[00:08:27.568] Browser ERROR   Error: {}
+[00:09:12.104] Server  LOG      ✓ Compiled in 20ms
