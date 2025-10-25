@@ -1,3 +1,59 @@
-[00:00:01.452] Server  LOG      ✓ Ready in 1282ms
-[00:00:04.519] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
-[00:00:05.027] Browser WARN    Image with src "http://localhost:3000/vercel.svg" has either width or height modified, but not the other. If you use CSS to change the size of your image, also include the styles 'width: "auto"' or 'height: "auto"' to maintain the aspect ratio.
+[00:00:00.558] Server  LOG      ✓ Ready in 352ms
+[00:00:02.970] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:00:25.301] Browser LOG     Button clicked
+[00:00:31.527] Server  ERROR   (node:84003) [DEP0060] DeprecationWarning: The `util._extend` API is deprecated. Please use Object.assign() instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+[00:07:40.370] Server  WARN     ⚠ Fast Refresh had to perform a full reload when ./Documents/hack_ohio/hack_ohio/frontend/src/app/quacking/page.js changed. Read more: https://nextjs.org/docs/messages/fast-refresh-reload
+[00:07:40.395] Server  LOG      ✓ Compiled in 77ms
+[00:07:40.736] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:07:46.885] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:09:03.755] Browser ERROR   uncaughtError: TypeError: Failed to construct 'Image': Please use the 'new' operator, this DOM object constructor cannot be called as a function.
+[00:09:29.869] Server  WARN     ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+[00:09:29.895] Server  LOG      ✓ Compiled in 72ms
+[00:09:30.252] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:09:39.963] Browser ERROR   uncaughtError: TypeError: Failed to construct 'Image': Please use the 'new' operator, this DOM object constructor cannot be called as a function.
+[00:12:07.407] Server  WARN     ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+[00:12:07.409] Server  LOG      ✓ Compiled in 135ms
+[00:12:07.712] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:15:01.267] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:21:18.916] Browser LOG     Button clicked
+[00:25:03.096] Server  LOG      ✓ Compiled in 64ms
+[00:27:02.195] Server  LOG      ✓ Compiled in 86ms
+[00:27:02.853] Browser ERROR   uncaughtError: TypeError: Failed to construct 'Image': Please use the 'new' operator, this DOM object constructor cannot be called as a function.
+[00:27:07.529] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:27:10.600] Browser ERROR   uncaughtError: TypeError: Failed to construct 'Image': Please use the 'new' operator, this DOM object constructor cannot be called as a function.
+[00:27:24.320] Server  WARN     ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+[00:27:24.326] Server  LOG      ✓ Compiled in 60ms
+[00:27:24.656] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:30:48.603] Server  LOG      ✓ Compiled in 74ms
+[00:30:48.854] Browser ERROR   ./Documents/hack_ohio/hack_ohio/frontend/src/app/quacking/page.js:118:16
+Parsing ecmascript source code failed
+  116 |                   </div>
+  117 |                 </div>
+> 118 |               )}
+      |                ^
+  119 |             </div>
+  120 |           ))}
+  121 |         </div>
+
+Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+
+Import traces:
+  Client Component Browser:
+    ./Documents/hack_ohio/hack_ohio/frontend/src/app/quacking/page.js [Client Component Browser]
+    ./Documents/hack_ohio/hack_ohio/frontend/src/app/quacking/page.js [Server Component]
+
+  Client Component SSR:
+    ./Documents/hack_ohio/hack_ohio/frontend/src/app/quacking/page.js [Client Component SSR]
+    ./Documents/hack_ohio/hack_ohio/frontend/src/app/quacking/page.js [Server Component]
+[00:33:38.304] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:35:20.487] Server  LOG      ✓ Compiled in 49ms
+[00:38:24.048] Server  LOG      ✓ Compiled in 56ms
+[00:39:34.396] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[01:02:46.610] Server  LOG      ✓ Compiled in 132ms
+[01:03:41.882] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[01:16:08.481] Server  LOG      ✓ Compiled in 77ms
+[01:19:12.391] Server  LOG      ✓ Compiled in 93ms
+[01:19:47.281] Server  LOG      ✓ Compiled in 45ms
+[01:20:16.816] Browser ERROR   Error: {}
+[01:20:31.570] Browser ERROR   Error: {}
