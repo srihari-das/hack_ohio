@@ -24,7 +24,11 @@ var __TURBOPACK__imported__module__$5b$project$5d2f$Documents$2f$hack_ohio$2f$ha
 var __TURBOPACK__imported__module__$5b$project$5d2f$Documents$2f$hack_ohio$2f$hack_ohio$2f$frontend$2f$node_modules$2f$next$2f$image$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/Documents/hack_ohio/hack_ohio/frontend/node_modules/next/image.js [app-rsc] (ecmascript)");
 ;
 ;
-function Home() {
+async function Home() {
+    const response = await fetch('http://localhost:8000/', {
+        cache: 'no-store'
+    });
+    const data = await response.json();
     return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Documents$2f$hack_ohio$2f$hack_ohio$2f$frontend$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
         className: "flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black",
         children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Documents$2f$hack_ohio$2f$hack_ohio$2f$frontend$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("main", {
@@ -39,7 +43,7 @@ function Home() {
                     priority: true
                 }, void 0, false, {
                     fileName: "[project]/Documents/hack_ohio/hack_ohio/frontend/src/app/page.js",
-                    lineNumber: 7,
+                    lineNumber: 11,
                     columnNumber: 9
                 }, this),
                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Documents$2f$hack_ohio$2f$hack_ohio$2f$frontend$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -47,10 +51,10 @@ function Home() {
                     children: [
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Documents$2f$hack_ohio$2f$hack_ohio$2f$frontend$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("h1", {
                             className: "max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50",
-                            children: "To get started, edit the page.js file."
+                            children: data.message
                         }, void 0, false, {
                             fileName: "[project]/Documents/hack_ohio/hack_ohio/frontend/src/app/page.js",
-                            lineNumber: 16,
+                            lineNumber: 20,
                             columnNumber: 11
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Documents$2f$hack_ohio$2f$hack_ohio$2f$frontend$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -64,7 +68,7 @@ function Home() {
                                     children: "Templates"
                                 }, void 0, false, {
                                     fileName: "[project]/Documents/hack_ohio/hack_ohio/frontend/src/app/page.js",
-                                    lineNumber: 21,
+                                    lineNumber: 25,
                                     columnNumber: 13
                                 }, this),
                                 " ",
@@ -76,7 +80,7 @@ function Home() {
                                     children: "Learning"
                                 }, void 0, false, {
                                     fileName: "[project]/Documents/hack_ohio/hack_ohio/frontend/src/app/page.js",
-                                    lineNumber: 28,
+                                    lineNumber: 32,
                                     columnNumber: 13
                                 }, this),
                                 " ",
@@ -84,13 +88,13 @@ function Home() {
                             ]
                         }, void 0, true, {
                             fileName: "[project]/Documents/hack_ohio/hack_ohio/frontend/src/app/page.js",
-                            lineNumber: 19,
+                            lineNumber: 23,
                             columnNumber: 11
                         }, this)
                     ]
                 }, void 0, true, {
                     fileName: "[project]/Documents/hack_ohio/hack_ohio/frontend/src/app/page.js",
-                    lineNumber: 15,
+                    lineNumber: 19,
                     columnNumber: 9
                 }, this),
                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Documents$2f$hack_ohio$2f$hack_ohio$2f$frontend$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -110,14 +114,14 @@ function Home() {
                                     height: 16
                                 }, void 0, false, {
                                     fileName: "[project]/Documents/hack_ohio/hack_ohio/frontend/src/app/page.js",
-                                    lineNumber: 44,
+                                    lineNumber: 48,
                                     columnNumber: 13
                                 }, this),
                                 "Deploy Now"
                             ]
                         }, void 0, true, {
                             fileName: "[project]/Documents/hack_ohio/hack_ohio/frontend/src/app/page.js",
-                            lineNumber: 38,
+                            lineNumber: 42,
                             columnNumber: 11
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Documents$2f$hack_ohio$2f$hack_ohio$2f$frontend$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("a", {
@@ -128,24 +132,24 @@ function Home() {
                             children: "Documentation"
                         }, void 0, false, {
                             fileName: "[project]/Documents/hack_ohio/hack_ohio/frontend/src/app/page.js",
-                            lineNumber: 53,
+                            lineNumber: 57,
                             columnNumber: 11
                         }, this)
                     ]
                 }, void 0, true, {
                     fileName: "[project]/Documents/hack_ohio/hack_ohio/frontend/src/app/page.js",
-                    lineNumber: 37,
+                    lineNumber: 41,
                     columnNumber: 9
                 }, this)
             ]
         }, void 0, true, {
             fileName: "[project]/Documents/hack_ohio/hack_ohio/frontend/src/app/page.js",
-            lineNumber: 6,
+            lineNumber: 10,
             columnNumber: 7
         }, this)
     }, void 0, false, {
         fileName: "[project]/Documents/hack_ohio/hack_ohio/frontend/src/app/page.js",
-        lineNumber: 5,
+        lineNumber: 9,
         columnNumber: 5
     }, this);
 }
