@@ -2,7 +2,7 @@
 
 import Image from 'next/image';
 
-export default function GraduateDuckButtton() {
+export default function ChildDuckButtton() {
     const handleButtonClick = () => {
     console.log('Button clicked');
     alert('Quack!');
@@ -10,10 +10,10 @@ export default function GraduateDuckButtton() {
 
     return (
         <button onClick={handleButtonClick}
-        className="fixed left-[29%] top-[23%] z-20 cursor-pointer hover:scale-110 transition-transform">
+        className="fixed left-[53%] top-[31%] z-10 cursor-pointer hover:scale-110 transition-transform">
             <Image 
-            src = "/graduate_duck2.png"
-            alt="Graduate Duck"
+            src = "/child_duck.png"
+            alt="Child Duck"
             width={300}
             height={300}
             priority
