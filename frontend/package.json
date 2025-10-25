@@ -8,14 +8,25 @@
     "start": "next start"
   },
   "dependencies": {
+<<<<<<< HEAD
     "next": "16.0.0",
     "postcss": "^8.5.6",
+=======
+    "lucide-react": "^0.548.0",
+    "next": "16.0.0",
+>>>>>>> origin
     "react": "19.2.0",
     "react-dom": "19.2.0"
   },
   "devDependencies": {
+<<<<<<< HEAD
     "@tailwindcss/postcss": "^4.1.16",
     "babel-plugin-react-compiler": "1.0.0",
     "tailwindcss": "^4.1.16"
+=======
+    "@tailwindcss/postcss": "^4",
+    "babel-plugin-react-compiler": "1.0.0",
+    "tailwindcss": "^4"
+>>>>>>> origin
   }
 }
