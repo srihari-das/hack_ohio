@@ -1,0 +1,51 @@
+globalThis.__BUILD_MANIFEST = {
+  "pages": {
+    "/_app": [
+      "static/chunks/664a3_next_dist_compiled_6434ed56._.js",
+      "static/chunks/664a3_next_dist_shared_lib_30919e51._.js",
+      "static/chunks/664a3_next_dist_client_844db29c._.js",
+      "static/chunks/664a3_next_dist_650a2c5e._.js",
+      "static/chunks/664a3_next_app_dde97cb5.js",
+      "static/chunks/[next]_entry_page-loader_ts_1517dc47._.js",
+      "static/chunks/664a3_react-dom_a2f75e5b._.js",
+      "static/chunks/664a3_a248e592._.js",
+      "static/chunks/[root-of-the-server]__82ce57be._.js",
+      "static/chunks/Documents_hack_ohio_hack_ohio_frontend_what_the_duck_pages__app_2da965e7._.js",
+      "static/chunks/358b3_hack_ohio_hack_ohio_frontend_what_the_duck_pages__app_e54e6d61._.js"
+    ],
+    "/_error": [
+      "static/chunks/664a3_next_dist_compiled_6434ed56._.js",
+      "static/chunks/664a3_next_dist_shared_lib_54ddb835._.js",
+      "static/chunks/664a3_next_dist_client_844db29c._.js",
+      "static/chunks/664a3_next_dist_f3bc665b._.js",
+      "static/chunks/664a3_next_error_3c470420.js",
+      "static/chunks/[next]_entry_page-loader_ts_b5a9b801._.js",
+      "static/chunks/664a3_react-dom_a2f75e5b._.js",
+      "static/chunks/664a3_a248e592._.js",
+      "static/chunks/[root-of-the-server]__23ee7199._.js",
+      "static/chunks/Documents_hack_ohio_hack_ohio_frontend_what_the_duck_pages__error_2da965e7._.js",
+      "static/chunks/358b3_hack_ohio_hack_ohio_frontend_what_the_duck_pages__error_7384f179._.js"
+    ]
+  },
+  "devFiles": [],
+  "polyfillFiles": [
+    "static/chunks/285dd_next_dist_build_polyfills_polyfill-nomodule.js"
+  ],
+  "lowPriorityFiles": [],
+  "rootMainFiles": [
+    "static/chunks/[turbopack]_browser_dev_hmr-client_hmr-client_ts_58e22b77._.js",
+    "static/chunks/285dd_next_dist_compiled_react-dom_b01fab23._.js",
+    "static/chunks/285dd_next_dist_compiled_react-server-dom-turbopack_77e5119a._.js",
+    "static/chunks/285dd_next_dist_compiled_next-devtools_index_713902c7.js",
+    "static/chunks/285dd_next_dist_compiled_17e2762e._.js",
+    "static/chunks/285dd_next_dist_client_5047e53d._.js",
+    "static/chunks/285dd_next_dist_704dbffb._.js",
+    "static/chunks/285dd_@swc_helpers_cjs_4fe393b2._.js",
+    "static/chunks/Documents_hack_ohio_hack_ohio_frontend_what_the_duck_a0ff3932._.js",
+    "static/chunks/turbopack-Documents_hack_ohio_hack_ohio_frontend_what_the_duck_687585b4._.js"
+  ]
+};
+globalThis.__BUILD_MANIFEST.lowPriorityFiles = [
+"/static/" + process.env.__NEXT_BUILD_ID + "/_buildManifest.js",
+"/static/" + process.env.__NEXT_BUILD_ID + "/_ssgManifest.js"
+];
