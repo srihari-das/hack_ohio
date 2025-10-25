@@ -17,8 +17,6 @@
   "devDependencies": {
     "@tailwindcss/postcss": "^4.1.16",
     "babel-plugin-react-compiler": "1.0.0",
-    "tailwindcss": "^4.1.16",
-    "babel-plugin-react-compiler": "1.0.0",
-    "tailwindcss": "^4"
+    "tailwindcss": "^4.1.16"
   }
 }
