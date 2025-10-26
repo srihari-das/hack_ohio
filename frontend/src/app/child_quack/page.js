@@ -86,7 +86,7 @@ export default function Quacking() {
         askGemini(trimmed, {
           max_tokens,
           history, // Send conversation history
-          duck: "grad" // Pass duck parameter for study session
+          duck: "child" // Pass duck parameter for study session
         }),
         analyzeSentiment(trimmed, {
           max_tokens,

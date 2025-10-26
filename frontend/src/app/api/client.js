@@ -6,14 +6,14 @@
 /**
  * Ask Gemini via backend POST /api/gemini
  * @param {string} prompt - The user prompt text.
- * @param {{system?: string, model?: string, max_tokens?: number}} [opts]
+ * @param {{max_tokens?: number, duck?: string, history?: Array}} [opts]
  * @returns {Promise<{ text: string }>} response JSON from backend.
  */
-export async function askGemini(prompt, { max_tokens, duck } = {}) {
+export async function askGemini(prompt, { max_tokens, duck, history = [] } = {}) {
   const res = await fetch("/api/gemini", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ prompt, max_tokens, duck }),
+    body: JSON.stringify({ prompt, max_tokens, duck, history }),
   });
   if (!res.ok) {
     let detail = "Request failed";
@@ -31,11 +31,11 @@ export async function askGemini(prompt, { max_tokens, duck } = {}) {
 /**
  * Get Gemini sentiment analysis via backend POST /api/analyze_sentiment
  */
-export async function analyzeSentiment(prompt, { max_tokens } = {}) {
+export async function analyzeSentiment(prompt, { max_tokens, history = [] } = {}) {
   const res = await fetch("/api/analyze_sentiment", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ prompt, max_tokens }),
+    body: JSON.stringify({ prompt, max_tokens, history }),
   });
   if (!res.ok) {
     let detail = "Request failed";
