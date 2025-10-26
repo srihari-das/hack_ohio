@@ -1,6 +1,6 @@
 // src/app/quacking/page.js
 "use client";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useMemo } from "react";
 import Image from "next/image";
 import { askGemini, analyzeSentiment } from "../api/client";
 import { sttSupported, useSpeechToText } from "../lib/stt";
@@ -29,6 +29,24 @@ export default function Quacking() {
     }
   }, [input]);
 
+  const textRef = useRef(null);
+  const gutterRef = useRef(null);
+
+  // Keep gutter vertically aligned with textarea scroll
+  const syncScroll = () => {
+    const ta = textRef.current;
+    const gut = gutterRef.current;
+    if (!ta || !gut) return;
+    gut.scrollTop = ta.scrollTop;
+  };
+
+  // Recompute line count efficiently
+  const lineCount = useMemo(() => Math.max(1, code.split("\n").length), [code]);
+
+  // After content changes, ensure alignment (e.g., when lines grow/shrink)
+  useEffect(() => {
+    syncScroll();
+  }, [code]);
   // Speech-to-Text: one-shot utterances; auto end when user pauses
   const {
     listening,
@@ -56,10 +74,17 @@ export default function Quacking() {
   // Map sentiment to duck image
   const getDuckImage = (sentiment) => {
     const sentimentLower = (sentiment || "neutral").toLowerCase();
-    
-    if (sentimentLower.includes("good") || sentimentLower.includes("positive")) {
+
+    if (
+      sentimentLower.includes("good") ||
+      sentimentLower.includes("positive")
+    ) {
       return "/understanding_coding_duck.png"; // Happy/successful duck
-    } else if (sentimentLower.includes("poor") || sentimentLower.includes("negative") || sentimentLower.includes("confused")) {
+    } else if (
+      sentimentLower.includes("poor") ||
+      sentimentLower.includes("negative") ||
+      sentimentLower.includes("confused")
+    ) {
       return "/confused_coding_duck.png"; // Confused duck (you'll need this image)
     } else {
       return "/attentive_coding_duck.png"; // Default/neutral duck
@@ -102,13 +127,13 @@ export default function Quacking() {
         askGemini(full_prompt, {
           max_tokens,
           history, // Send conversation history
-          duck: "coding"
+          duck: "coding",
         }),
         analyzeSentiment(trimmed, {
           max_tokens,
           history, // Send conversation history to sentiment analysis too
-          duck: "coding"
-        })
+          duck: "coding",
+        }),
       ]);
 
       // Update sentiment
@@ -196,7 +221,7 @@ export default function Quacking() {
 
   return (
     <div className="flex h-screen bg-gradient-to-b from-gray-900 to-gray-800">
-      <div className="w-1/2 border-r-2 border-amber-800 flex flex-col">
+      <div className="w-1/2 border-r-2 border-amber-800 flex flex-col min-h-0 overflow-hidden">
         <div className="bg-gray-800 border-b-2 border-amber-800 px-6 py-6.5 flex items-center">
           <h2 className="text-amber-400 font-bold text-xl">Code Editor</h2>
           {/* Sentiment indicator */}
@@ -214,27 +239,40 @@ export default function Quacking() {
             </div>
           )}
         </div>
-        <div className="flex-1 p-4">
-          <div className="relative h-full w-full flex rounded-lg border-2 border-gray-700 bg-gray-800 overflow-hidden">
-            {/* Line numbers */}
-            <div className="bg-gray-900 text-gray-500 text-right px-3 py-4 select-none font-mono text-sm border-r border-gray-700">
-              {Array.from({ length: Math.max(1, code.split("\n").length) }).map(
-                (_, i) => (
-                  <div key={i} className="leading-6">
-                    {i + 1}
-                  </div>
-                )
-              )}
+        <div className="relative h-full w-full rounded-lg border-2 border-gray-700 bg-gray-800">
+          <div className="flex h-full w-full">
+            {/* Line numbers (no scrollbar; we sync to textarea) */}
+            <div
+              ref={gutterRef}
+              className="bg-gray-900 text-gray-500 text-right px-3 py-4 select-none border-r border-gray-700 overflow-hidden tabular-nums"
+              style={{
+                lineHeight: "1.5rem",
+                fontFamily: "monospace",
+                width: "3.5rem",
+              }} /* fixed, stable gutter */
+            >
+              {Array.from({ length: lineCount }).map((_, i) => (
+                <div key={i} className="leading-6">
+                  {i + 1}
+                </div>
+              ))}
             </div>
 
-            {/* Code textarea */}
+            {/* Textarea owns the single scrollbar (vertical + horizontal) */}
             <textarea
+              ref={textRef}
               value={code}
               onChange={(e) => setCode(e.target.value)}
+              onScroll={syncScroll}
               placeholder="Write or paste your code here..."
-              className="flex-1 h-full bg-gray-800 text-green-400 font-mono text-sm p-4 focus:outline-none focus:ring-2 focus:ring-amber-600 resize-none"
+              className="flex-1 h-full bg-gray-800 text-green-400 p-4 focus:outline-none focus:ring-2 focus:ring-amber-600 resize-none whitespace-pre overflow-auto"
               spellCheck="false"
-              style={{ lineHeight: "1.5rem" }}
+              style={{
+                lineHeight: "1.5rem",
+                fontFamily: "monospace",
+                // keeps layout from shifting when scrollbars appear (supported in modern browsers)
+                scrollbarGutter: "stable both-edges",
+              }}
             />
           </div>
         </div>
@@ -247,16 +285,18 @@ export default function Quacking() {
           <div className="flex items-center gap-4">
             <BackButton />
           </div>
-          
+
           {/* Sentiment indicator */}
           {sentiment && (
-            <div className={`px-4 py-2 rounded-lg font-semibold ${
-              sentiment.toLowerCase().includes("good") 
-                ? "bg-green-600 text-white" 
-                : sentiment.toLowerCase().includes("poor")
-                ? "bg-red-600 text-white"
-                : "bg-gray-600 text-white"
-            }`}>
+            <div
+              className={`px-4 py-2 rounded-lg font-semibold ${
+                sentiment.toLowerCase().includes("good")
+                  ? "bg-green-600 text-white"
+                  : sentiment.toLowerCase().includes("poor")
+                  ? "bg-red-600 text-white"
+                  : "bg-gray-600 text-white"
+              }`}
+            >
               Understanding: {sentiment}
             </div>
           )}
@@ -335,7 +375,7 @@ export default function Quacking() {
                 )}
               </div>
             ))}
-            
+
             {/* Invisible element at the bottom for auto-scroll */}
             <div ref={messagesEndRef} />
           </div>
