@@ -40,20 +40,13 @@ export default function Quacking() {
   // Map sentiment to duck image
   const getDuckImage = (sentiment) => {
     const sentimentLower = (sentiment || "neutral").toLowerCase();
-
-    if (
-      sentimentLower.includes("good") ||
-      sentimentLower.includes("positive")
-    ) {
-      return "/adult_duck.png"; // Happy/successful duck
-    } else if (
-      sentimentLower.includes("poor") ||
-      sentimentLower.includes("negative") ||
-      sentimentLower.includes("confused")
-    ) {
-      return "/child_duck.png"; // Confused duck (you'll need this image)
+    
+    if (sentimentLower.includes("good") || sentimentLower.includes("positive")) {
+      return "/understanding_coding_duck.png"; // Happy/successful duck
+    } else if (sentimentLower.includes("poor") || sentimentLower.includes("negative") || sentimentLower.includes("confused")) {
+      return "/confused_coding_duck.png"; // Confused duck (you'll need this image)
     } else {
-      return "/graduate_duck2.png"; // Default/neutral duck
+      return "/attentive_coding_duck.png"; // Default/neutral duck
     }
   };
 
@@ -88,7 +81,8 @@ export default function Quacking() {
         }),
         analyzeSentiment(trimmed, {
           max_tokens,
-        }),
+          duck: "coding"
+        })
       ]);
 
       // Update sentiment

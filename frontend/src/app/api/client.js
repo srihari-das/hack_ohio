@@ -31,11 +31,11 @@ export async function askGemini(prompt, { max_tokens, duck, history = [] } = {})
 /**
  * Get Gemini sentiment analysis via backend POST /api/analyze_sentiment
  */
-export async function analyzeSentiment(prompt, { max_tokens, history = [] } = {}) {
+export async function analyzeSentiment(prompt, { max_tokens, duck, history = [] } = {}) {
   const res = await fetch("/api/analyze_sentiment", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ prompt, max_tokens, history }),
+    body: JSON.stringify({ prompt, max_tokens, duck, history }),
   });
   if (!res.ok) {
     let detail = "Request failed";
