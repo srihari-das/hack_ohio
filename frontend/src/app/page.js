@@ -28,7 +28,7 @@ export default async function Home() {
         <Link href="/quacking">
           <AdultDuckButton />
         </Link>
-        <Link href="/quacking">
+        <Link href="/code_quacking">
           <CodeDuckButton />
         </Link>
       </main>
