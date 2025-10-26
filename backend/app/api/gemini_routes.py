@@ -55,11 +55,14 @@ async def prompt_gemini(body: GeminiPromptRequest) -> GeminiPromptResponse:
     system_instruction = prompts.PROMPTS[curr_prompt]
 
     model = genai.GenerativeModel(model_name, system_instruction=system_instruction)
-    result = model.generate_content(body.prompt, generation_config=generation_config)  # type: ignore[arg-type]
     
-    # Debug: Print the full result structure
-    print(f"Prompt feedback: {result.prompt_feedback}")
-    print(f"Candidates: {result.candidates}")
+    # Convert history to Gemini format and start chat
+    gemini_history = [
+        {"role": msg.role, "parts": [msg.content]}
+        for msg in body.history
+    ]
+    chat = model.start_chat(history=gemini_history)
+    result = chat.send_message(body.prompt, generation_config=generation_config)  # type: ignore[arg-type]]
     
     # Check if the prompt itself was blocked
     if hasattr(result, 'prompt_feedback') and result.prompt_feedback.block_reason:
