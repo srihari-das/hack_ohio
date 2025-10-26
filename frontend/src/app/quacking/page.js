@@ -1,6 +1,6 @@
 // src/app/quacking/page.js
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import { askGemini } from "../api/client";
 import { sttSupported, useSpeechToText } from "../lib/stt";
@@ -15,6 +15,12 @@ export default function Quacking() {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const messagesEndRef = useRef(null);
+
+  // Auto-scroll to bottom when messages change
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
 
   // Speech-to-Text: one-shot utterances; auto end when user pauses
   const {
@@ -221,6 +227,9 @@ export default function Quacking() {
               )}
             </div>
           ))}
+          
+          {/* Invisible element at the bottom for auto-scroll */}
+          <div ref={messagesEndRef} />
         </div>
       </div>
 
