@@ -4,7 +4,12 @@ import { useState, useEffect } from "react";
 import Image from "next/image";
 import { askGemini } from "../api/client";
 import { sttSupported, useSpeechToText } from "../lib/stt";
-import { speak, cancel, supported as ttsSupported } from "../lib/tts";
+import {
+  speak,
+  speakRealistic,
+  cancel,
+  supported as ttsSupported,
+} from "../lib/tts";
 
 export default function Quacking() {
   const [messages, setMessages] = useState([]);
@@ -50,15 +55,14 @@ export default function Quacking() {
     try {
       // Build history from current messages (exclude the loading placeholder we just added)
       const history = messages
-        .filter(msg => !msg.isLoading) // Exclude loading placeholders
-        .map(msg => ({
+        .filter((msg) => !msg.isLoading) // Exclude loading placeholders
+        .map((msg) => ({
           role: msg.role === "assistant" ? "model" : "user", // Convert to Gemini format
-          content: msg.content
+          content: msg.content,
         }));
 
       const data = await askGemini(trimmed, {
-        system:
-          `You are a college student with a solid foundational understanding of your field. You will be discussing a topic with another student at your level. Your job is to answer questions thoughtfully, ask follow-up questions, and clarify your shared understanding — as if you were collaborating in a study session. Keep your tone conversational and intellectually curious, not overly formal or didactic. Example style: "That makes sense, but how does it connect to what we learned in class?" "I think it works because of X — does that line up with your understanding?"`,
+        system: `You are a college student with a solid foundational understanding of your field. You will be discussing a topic with another student at your level. Your job is to answer questions thoughtfully, ask follow-up questions, and clarify your shared understanding — as if you were collaborating in a study session. Keep your tone conversational and intellectually curious, not overly formal or didactic. Example style: "That makes sense, but how does it connect to what we learned in class?" "I think it works because of X — does that line up with your understanding?"`,
         max_tokens,
         history, // Send conversation history
       });
@@ -76,12 +80,20 @@ export default function Quacking() {
         return next;
       });
 
-      // Speak assistant reply
-      if (ttsSupported) {
-        try {
-          cancel();
-        } catch {}
-        speak({ text: data.text });
+      // Speak assistant reply (prefer realistic TTS if available)
+      try {
+        console.log("Using realistic TTS");
+        await speakRealistic({
+          text: data.text,
+          voice_id: "EDO68oHvNm0rxTewQZSK",
+        });
+      } catch {
+        if (ttsSupported) {
+          try {
+            cancel();
+          } catch {}
+          speak({ text: data.text });
+        }
       }
     } catch (error) {
       console.error("Error:", error);
