@@ -62,11 +62,11 @@ export default function Quacking() {
     const sentimentLower = (sentiment || "neutral").toLowerCase();
     
     if (sentimentLower.includes("good") || sentimentLower.includes("positive")) {
-      return "/understanding_grad_duck.png"; // Happy/successful duck
+      return "/understanding_adult_duck.png"; // Happy/successful duck
     } else if (sentimentLower.includes("poor") || sentimentLower.includes("negative") || sentimentLower.includes("confused")) {
-      return "/confused_grad_duck.png"; // Confused duck
+      return "/confused_adult_duck.png"; // Confused duck
     } else {
-      return "/attentive_grad_duck1.png"; // Default/neutral duck
+      return "/attentive_adult_duck.png"; // Default/neutral duck
     }
   };
 
@@ -96,7 +96,7 @@ export default function Quacking() {
         askGemini(trimmed, {
           max_tokens,
           history, // Send conversation history
-          duck: "grad" // Pass duck parameter for study session
+          duck: "prof" // Pass duck parameter for study session
         }),
         analyzeSentiment(trimmed, {
           max_tokens,
