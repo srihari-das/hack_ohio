@@ -257,7 +257,7 @@ export default function Quacking() {
                     : "border-amber-700 bg-amber-600 text-white"
                 } hover:brightness-110 transition`}
               >
-                {listening ? "🎙️ Stop" : "🎤 Speak"}
+                {listening ? "🎙️" : "🎤"}
               </button>
               <input
                 type="text"
@@ -279,7 +279,9 @@ export default function Quacking() {
               </button>
             </div>
             {sttError && (
-              <div className="text-red-400 text-sm mt-2">{String(sttError)}</div>
+              <div className="text-red-400 text-sm mt-2">
+                {String(sttError)}
+              </div>
             )}
           </div>
         </div>
