@@ -4,6 +4,7 @@ from pydantic import BaseModel, Field
 from typing import List, Literal
 
 from app.config import settings
+from app.api.prompts import prompts
 
 router = APIRouter()
 
@@ -15,11 +16,12 @@ class Message(BaseModel):
 
 class GeminiPromptRequest(BaseModel):
     prompt: str = Field(..., min_length=1, description="User prompt to send to Gemini")
-    system: str | None = Field(
-        default="You are a helpful assistant.", description="Optional system prompt"
-    )
     max_tokens: int | None = Field(
         default=None, ge=1, le=65536, description="Override max tokens for response"
+    )
+    duck: str | None = Field(
+        default=None,
+        description="Type of duck prompt to use: 'child', 'grad', 'prof', 'coding'",
     )
     history: List[Message] = Field(
         default_factory=list, description="Conversation history"
@@ -37,17 +39,23 @@ async def prompt_gemini(body: GeminiPromptRequest) -> GeminiPromptResponse:
     generation_config: dict = {
         "max_output_tokens": body.max_tokens or settings.MAX_TOKENS,
     }
-    system_instruction = body.system or ""
+
+    curr_prompt = ""
+    if body.duck == "child":
+        curr_prompt = "child_duck_prompt"
+    elif body.duck == "grad":
+        curr_prompt = "grad_duck_prompt"
+    elif body.duck == "prof":
+        curr_prompt = "prof_duck_prompt"
+    elif body.duck == "coding":
+        curr_prompt = "coding_duck_prompt"
+    else:
+        curr_prompt = "You are a helpful duck assistant."
+
+    system_instruction = prompts.PROMPTS[curr_prompt]
 
     model = genai.GenerativeModel(model_name, system_instruction=system_instruction)
-    
-    # Convert history to Gemini format and start chat
-    gemini_history = [
-        {"role": msg.role, "parts": [msg.content]}
-        for msg in body.history
-    ]
-    chat = model.start_chat(history=gemini_history)
-    result = chat.send_message(body.prompt, generation_config=generation_config)  # type: ignore[arg-type]
+    result = model.generate_content(body.prompt, generation_config=generation_config)  # type: ignore[arg-type]
     
     # Debug: Print the full result structure
     print(f"Prompt feedback: {result.prompt_feedback}")
@@ -82,10 +90,6 @@ async def prompt_gemini(body: GeminiPromptRequest) -> GeminiPromptResponse:
         }
         error_msg = reason_map.get(finish_reason, "Response generation failed")
         
-        # Log safety ratings for debugging
-        if finish_reason == 3 and candidate.safety_ratings:
-            print(f"Safety ratings: {candidate.safety_ratings}")
-        
         raise HTTPException(status_code=400, detail=error_msg)
     
     # Check if content exists
@@ -106,3 +110,61 @@ async def prompt_gemini(body: GeminiPromptRequest) -> GeminiPromptResponse:
         )
     
     return GeminiPromptResponse(text=text)
+
+class SentimentResponse(BaseModel):
+    sentiment: str
+
+
+@router.post("/analyze_sentiment", response_model=SentimentResponse)
+async def analyze_sentiment(body: GeminiPromptRequest) -> SentimentResponse:
+    genai.configure(api_key=settings.GOOGLE_API_KEY)
+    model_name = settings.GEMINI_MODEL
+    generation_config: dict = {
+        "max_output_tokens": body.max_tokens or settings.MAX_TOKENS,
+        "temperature": 0.3,
+    }
+    
+    system_instruction = prompts.PROMPTS.get("sentiment_analysis_prompt", "You are an expert sentiment analysis model, classify the understanding as Good, Poor, or Neutral in one word.")
+    model = genai.GenerativeModel(model_name, system_instruction=system_instruction)
+    result = model.generate_content(body.prompt, generation_config=generation_config)  # type: ignore[arg-type]
+    
+    if not result.candidates:
+        print("No candidates returned")
+        return SentimentResponse(sentiment="Neutral")
+    
+    candidate = result.candidates[0]
+    finish_reason = candidate.finish_reason
+    
+    print(f"Finish reason: {finish_reason}")
+    
+    # Only block on SAFETY (3), RECITATION (4), or OTHER (5)
+    # STOP (1) and MAX_TOKENS (2) are both OK
+    if finish_reason in [3, 4, 5]:
+        print(f"Response blocked with finish_reason: {finish_reason}")
+        return SentimentResponse(sentiment="Neutral")
+    
+    # For MAX_TOKENS, the content still exists, just truncated
+    try:
+        # Access the text from parts directly
+        if candidate.content and candidate.content.parts:
+            text = candidate.content.parts[0].text.strip()
+        else:
+            print("No content parts, using result.text accessor")
+            text = result.text.strip()
+        
+        print(f"Raw sentiment response: '{text}'")
+        
+        sentiment = text.split()[0] if text else "Neutral"
+        sentiment = sentiment.capitalize()
+        
+        if sentiment not in ["Good", "Neutral", "Poor"]:
+            print(f"Unexpected sentiment value: '{sentiment}', defaulting to Neutral")
+            sentiment = "Neutral"
+        
+        print(f"Final sentiment: {sentiment}")
+        
+    except Exception as e:
+        print(f"Error extracting sentiment: {e}")
+        sentiment = "Neutral"
+    
+    return SentimentResponse(sentiment=sentiment)

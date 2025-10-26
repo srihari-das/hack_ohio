@@ -2,12 +2,13 @@
 "use client";
 import { useState, useEffect } from "react";
 import Image from "next/image";
-import { askGemini } from "../api/client";
+import { askGemini, analyzeSentiment } from "../api/client";
 import { sttSupported, useSpeechToText } from "../lib/stt";
 import { speak, cancel, supported as ttsSupported } from "../lib/tts";
 
 export default function Quacking() {
   const [messages, setMessages] = useState([]);
+  const [sentiment, setSentiment] = useState("Neutral");
   const [input, setInput] = useState("");
   const [code, setCode] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -36,7 +37,20 @@ export default function Quacking() {
     }
   }, [listening]);
 
-  const sendPrompt = async (prompt, { max_tokens = 512 } = {}) => {
+  // Map sentiment to duck image
+  const getDuckImage = (sentiment) => {
+    const sentimentLower = (sentiment || "neutral").toLowerCase();
+    
+    if (sentimentLower.includes("good") || sentimentLower.includes("positive")) {
+      return "/adult_duck.png"; // Happy/successful duck
+    } else if (sentimentLower.includes("poor") || sentimentLower.includes("negative") || sentimentLower.includes("confused")) {
+      return "/child_duck.png"; // Confused duck (you'll need this image)
+    } else {
+      return "/graduate_duck2.png"; // Default/neutral duck
+    }
+  };
+
+  const sendPrompt = async (prompt, { max_tokens = 4096 } = {}) => {
     const trimmed = (prompt || "").trim();
     if (!trimmed) return;
 
@@ -59,11 +73,21 @@ export default function Quacking() {
     setIsLoading(true);
 
     try {
-      const data = await askGemini(full_prompt, {
-        system:
-          "You are a helpful rubber duck assistant that asks Socratic questions to help users learn by explaining concepts. When a user explains something to you, ask thoughtful questions that guide them to deeper understanding. Be encouraging and curious.",
-        max_tokens,
-      });
+      // Get both responses in parallel
+      const [data, sentimentData] = await Promise.all([
+        askGemini(full_prompt, {
+          max_tokens,
+          duck: "coding"
+        }),
+        analyzeSentiment(trimmed, {
+          max_tokens,
+        })
+      ]);
+
+      // Update sentiment
+      const newSentiment = sentimentData.sentiment || "Neutral";
+      console.log("Sentiment analyzed:", newSentiment);
+      setSentiment(newSentiment);
 
       // Replace the trailing placeholder with the actual response
       setMessages((prev) => {
@@ -71,9 +95,17 @@ export default function Quacking() {
         const next = prev.slice();
         const last = next.length - 1;
         if (next[last]?.isLoading) {
-          next[last] = { role: "assistant", content: data.text };
+          next[last] = { 
+            role: "assistant", 
+            content: data.text,
+            sentiment: newSentiment 
+          };
         } else {
-          next.push({ role: "assistant", content: data.text });
+          next.push({ 
+            role: "assistant", 
+            content: data.text,
+            sentiment: newSentiment 
+          });
         }
         return next;
       });
@@ -139,8 +171,20 @@ export default function Quacking() {
     <div className="flex h-screen bg-gradient-to-b from-gray-900 to-gray-800">
       {/* Left side - Code Editor */}
       <div className="w-1/2 border-r-2 border-amber-800 flex flex-col">
-        <div className="bg-gray-800 border-b-2 border-amber-800 px-6 py-4">
+        <div className="bg-gray-800 border-b-2 border-amber-800 px-6 py-4 flex justify-between items-center">
           <h2 className="text-amber-400 font-bold text-xl">Code Editor</h2>
+          {/* Sentiment indicator */}
+          {sentiment && (
+            <div className={`px-4 py-2 rounded-lg font-semibold ${
+              sentiment.toLowerCase().includes("good") 
+                ? "bg-green-600 text-white" 
+                : sentiment.toLowerCase().includes("poor")
+                ? "bg-red-600 text-white"
+                : "bg-gray-600 text-white"
+            }`}>
+              Understanding: {sentiment}
+            </div>
+          )}
         </div>
         <div className="flex-1 p-4">
           <textarea
@@ -182,8 +226,8 @@ export default function Quacking() {
                     {/* Duck character image - behind and slightly transparent */}
                     <div className="flex justify-center mb-[-60px] relative z-0 opacity-70">
                       <Image
-                        src="/graduate_duck2.png"
-                        alt="Graduate Duck"
+                        src={getDuckImage(msg.sentiment || sentiment)}
+                        alt="Duck"
                         width={300}
                         height={300}
                         priority
