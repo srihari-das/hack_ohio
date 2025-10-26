@@ -130,20 +130,16 @@ export default function Quacking() {
         return next;
       });
 
-      // Speak assistant reply (prefer realistic TTS if available)
-      try {
-        console.log("Using realistic TTS");
-        await speakRealistic({
-          text: data.text,
-          voice_id: "EDO68oHvNm0rxTewQZSK",
-        });
-      } catch {
-        if (ttsSupported) {
-          try {
-            cancel();
-          } catch {}
-          speak({ text: data.text });
-        }
+      // Speak assistant reply (prefer realistic TTS; fallback to browser if unavailable)
+      const audio = await speakRealistic({
+        text: data.text,
+        voice_id: "EDO68oHvNm0rxTewQZSK",
+      });
+      if (!audio && ttsSupported) {
+        try {
+          cancel();
+        } catch {}
+        speak({ text: data.text });
       }
     } catch (error) {
       console.error("Error:", error);
