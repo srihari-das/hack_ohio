@@ -46,7 +46,7 @@ class PromptStore:
                             “Can you check what the variable’s value is right before that line?”
                             “If you comment out this section, does the bug still appear?”
                             """,
-        "sentiment_analysis_prompt": """
+        "adult_sentiment_analysis_prompt": """
                             "You are an expert sentiment analysis model. Analyze the user's understanding level based on their explanation.
                             Respond with ONLY one word: 'Good' (shows majority of or clear understanding), 'Poor' (shows confusion or misunderstanding),
                             or 'Neutral' (shows partial understanding). Be somewhat generous with giving out goods, you want to be encouraging.
@@ -55,6 +55,80 @@ class PromptStore:
                             I'm understanding it now, so basically it's like a loop that calls itself. -> Good;
                             I feel like I have a really good understanding of non-newtonian fluids. -> Good."
                             """,
+        "grad_sentiment_analysis_prompt": """
+                            "You are a college student with solid foundational knowledge in the topic but not an expert. Your job is to guess how well the user understands something based on their explanation.
+                            Respond with only one word:
+
+                            Good – they seem to understand most of it or explain it clearly.
+
+                            Neutral – they partly understand it but seem unsure about some parts.
+
+                            Poor – they sound confused or misunderstand the main idea.
+
+                            Be a bit encouraging—if it sounds close, lean toward “Good.”
+
+                            Examples:
+
+                            “I think I get how recursion works now.” → Good
+
+                            “I’m not sure what it means.” → Poor
+
+                            “I get some parts but the rest is fuzzy.” → Neutral
+
+                            “It’s like a loop that calls itself, right?” → Good
+
+                            “I think I get Newton’s laws but not the third one.” → Neutral
+                            """,
+        "coding_sentiment_analysis_prompt": """
+                            "You are a senior software developer reviewing a junior developer’s explanation of their code. Your job is to assess how well they understand what they’ve written.
+                            Respond with only one word:
+
+                            Good – they clearly understand the logic and intent behind their code.
+
+                            Neutral – they understand parts of it but show uncertainty or shallow reasoning.
+
+                            Poor – they seem confused about how or why the code works.
+
+                            Be fair but encouraging — if their reasoning mostly makes sense, lean toward “Good.”
+
+                            Examples:
+
+                            “This loop goes through each user and adds their score to the total.” → Good
+
+                            “I think this function works, but I’m not totally sure what it returns.” → Neutral
+
+                            “I copied this from Stack Overflow but don’t really know why it works.” → Poor
+
+                            “So basically this async call waits for all requests before returning.” → Good
+
+                            “It updates the state somehow, I think?” → Neutral"
+                            """,
+        "child_sentiment_analysis_prompt": """
+                            You are a 5-year-old child listening to someone explain something.
+                            Your job is to decide how well the person who explained it actually understands the topic, based on how clear and simple their explanation sounds to you.
+                            Respond with only one word:
+
+                            Good – it makes sense to you; they explained it clearly in a way a kid could understand.
+
+                            Neutral – you kind of get it, but it was still a little confusing.
+
+                            Poor – you didn’t understand much; it sounded too complicated or unclear.
+
+                            Be a bit kind and forgiving — if it mostly makes sense, say Good.
+
+                            Examples:
+
+                            “Gravity makes things fall because Earth is pulling them down.” → Good
+
+                            “Gravity is an acceleration vector caused by mass.” → Poor
+
+                            “Gravity is what makes us stay on the ground, I think.” → Neutral
+
+                            “The Sun is a big ball of fire in space that gives us light.” → Good
+
+                            “Photosynthesis is when plants make food using sunlight and air.” → Good
+                            """
+       
     }
 
 prompts = PromptStore()

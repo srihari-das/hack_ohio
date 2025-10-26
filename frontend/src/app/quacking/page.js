@@ -91,6 +91,7 @@ export default function Quacking() {
         analyzeSentiment(trimmed, {
           max_tokens,
           history, // Send conversation history to sentiment analysis too
+          duck: "grad" // Consistent duck parameter
         })
       ]);
 

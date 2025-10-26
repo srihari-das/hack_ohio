@@ -126,8 +126,20 @@ async def analyze_sentiment(body: GeminiPromptRequest) -> SentimentResponse:
         "max_output_tokens": body.max_tokens or settings.MAX_TOKENS,
         "temperature": 0.3,
     }
-    
-    system_instruction = prompts.PROMPTS.get("sentiment_analysis_prompt", "You are an expert sentiment analysis model, classify the understanding as Good, Poor, or Neutral in one word.")
+
+    curr_prompt = ""
+    if body.duck == "child":
+        curr_prompt = "child_sentiment_analysis_prompt"
+    elif body.duck == "grad":
+        curr_prompt = "grad_sentiment_analysis_prompt"
+    elif body.duck == "prof":
+        curr_prompt = "adult_sentiment_analysis_prompt"
+    elif body.duck == "coding":
+        curr_prompt = "coding_sentiment_analysis_prompt"
+    else:
+        curr_prompt = "Analyze the understanding"
+
+    system_instruction = prompts.PROMPTS[curr_prompt]
     model = genai.GenerativeModel(model_name, system_instruction=system_instruction)
     result = model.generate_content(body.prompt, generation_config=generation_config)  # type: ignore[arg-type]
     
