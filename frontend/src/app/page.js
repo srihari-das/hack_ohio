@@ -7,8 +7,8 @@ import CodeDuckButton from "./components/CodeDuckButton";
 import Title from "./components/Title";
 
 export default async function Home() {
-  const response = await fetch('http://localhost:8000/', {
-    cache: 'no-store'
+  const response = await fetch("http://localhost:8000/", {
+    cache: "no-store",
   });
   const data = await response.json();
 
