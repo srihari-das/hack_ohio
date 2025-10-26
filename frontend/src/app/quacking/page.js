@@ -1,58 +1,128 @@
 // src/app/quacking/page.js
-'use client';
-import { useState } from 'react';
-import Image from 'next/image';
+"use client";
+import { useState, useEffect } from "react";
+import Image from "next/image";
+import { askGemini } from "../api/client";
+import { sttSupported, useSpeechToText } from "../lib/stt";
+import { speak, cancel, supported as ttsSupported } from "../lib/tts";
 
 export default function Quacking() {
   const [messages, setMessages] = useState([]);
-  const [input, setInput] = useState('');
+  const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleSend = async () => {
-    if (!input.trim()) return;
+  // Speech-to-Text: one-shot utterances; auto end when user pauses
+  const {
+    listening,
+    interim,
+    finalText,
+    error: sttError,
+    start,
+    stop,
+    reset,
+  } = useSpeechToText({
+    lang: "en-US",
+    continuous: false,
+    interimResults: true,
+  });
 
-    const userMessage = { role: 'user', content: input };
-    setMessages(prev => [...prev, userMessage]);
-    setInput('');
+  // If user starts speaking, stop any ongoing TTS so it doesn't talk over them
+  useEffect(() => {
+    if (listening && ttsSupported) {
+      try {
+        cancel();
+      } catch {}
+    }
+  }, [listening]);
+
+  const sendPrompt = async (prompt, { max_tokens = 512 } = {}) => {
+    const trimmed = (prompt || "").trim();
+    if (!trimmed) return;
+
+    // Append user message and an assistant placeholder (loading)
+    setMessages((prev) => [
+      ...prev,
+      { role: "user", content: trimmed },
+      { role: "assistant", content: "", isLoading: true },
+    ]);
     setIsLoading(true);
 
-    // Add placeholder message immediately to show duck
-    const placeholderMessage = { role: 'assistant', content: '', isLoading: true };
-    setMessages(prev => [...prev, placeholderMessage]);
-
     try {
-      // Call the backend directly
-      const response = await fetch('http://localhost:8000/api/gemini', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          prompt: input,
-          system: "You are a helpful rubber duck assistant that asks Socratic questions to help users learn by explaining concepts. When a user explains something to you, ask thoughtful questions that guide them to deeper understanding. Be encouraging and curious.",
-          max_tokens: 2048
-        }),
+      const data = await askGemini(trimmed, {
+        system:
+          "You are a helpful rubber duck assistant that asks Socratic questions to help users learn by explaining concepts. When a user explains something to you, ask thoughtful questions that guide them to deeper understanding. Be encouraging and curious.",
+        max_tokens,
       });
 
-      const data = await response.json();
-      
-      // Replace placeholder with actual response
-      setMessages(prev => prev.map((msg, idx) => 
-        idx === prev.length - 1 && msg.isLoading
-          ? { role: 'assistant', content: data.text }
-          : msg
-      ));
+      // Replace the trailing placeholder with the actual response
+      setMessages((prev) => {
+        if (!prev.length) return prev;
+        const next = prev.slice();
+        const last = next.length - 1;
+        if (next[last]?.isLoading) {
+          next[last] = { role: "assistant", content: data.text };
+        } else {
+          next.push({ role: "assistant", content: data.text });
+        }
+        return next;
+      });
+
+      // Speak assistant reply
+      if (ttsSupported) {
+        try {
+          cancel();
+        } catch {}
+        speak({ text: data.text });
+      }
     } catch (error) {
-      console.error('Error:', error);
-      setMessages(prev => prev.map((msg, idx) => 
-        idx === prev.length - 1 && msg.isLoading
-          ? { role: 'assistant', content: 'Sorry, something went wrong. Please try again.' }
-          : msg
-      ));
+      console.error("Error:", error);
+      setMessages((prev) => {
+        if (!prev.length) return prev;
+        const next = prev.slice();
+        const last = next.length - 1;
+        if (next[last]?.isLoading) {
+          next[last] = {
+            role: "assistant",
+            content: "Sorry, something went wrong. Please try again.",
+          };
+        } else {
+          next.push({
+            role: "assistant",
+            content: "Sorry, something went wrong. Please try again.",
+          });
+        }
+        return next;
+      });
     } finally {
       setIsLoading(false);
     }
   };
+
+  const handleSend = async () => {
+    if (!input.trim()) return;
+    const prompt = input;
+    setInput("");
+    await sendPrompt(prompt, { max_tokens: 512 });
+  };
+
+  // When speech recognition ends and we have an utterance, send it
+  useEffect(() => {
+    if (!sttSupported) return;
+    if (listening) return; // still capturing
+    const prompt = (finalText + (interim ? " " + interim : "")).trim();
+    if (!prompt) return;
+
+    (async () => {
+      try {
+        await sendPrompt(prompt, { max_tokens: 256 });
+      } finally {
+        // clear transcript after sending; do not auto-restart here, user controls with mic
+        try {
+          reset();
+        } catch {}
+      }
+    })();
+  }, [sttSupported, listening, finalText, interim]);
 
   return (
     <div className="flex flex-col h-screen bg-gradient-to-b from-gray-900 to-gray-800">
@@ -62,13 +132,15 @@ export default function Quacking() {
           {messages.length === 0 && (
             <div className="text-center text-gray-400 mt-20">
               <p className="text-lg mb-2">Start explaining a concept</p>
-              <p className="text-sm">The duck will ask questions to help you learn</p>
+              <p className="text-sm">
+                The duck will ask questions to help you learn
+              </p>
             </div>
           )}
-          
+
           {messages.map((msg, idx) => (
             <div key={idx}>
-              {msg.role === 'user' ? (
+              {msg.role === "user" ? (
                 // User message - simple style
                 <div className="flex justify-end mb-4">
                   <div className="max-w-2xl px-6 py-4 rounded-lg bg-blue-600 text-white">
@@ -80,34 +152,43 @@ export default function Quacking() {
                 <div className="relative max-w-3xl mx-auto">
                   {/* Duck character image - behind and slightly transparent */}
                   <div className="flex justify-center mb-[-60px] relative z-0 opacity-70">
-                      <Image 
-                        src = "/graduate_duck2.png"
-                        alt="Graduate Duck"
-                        width={300}
-                        height={300}
-                        priority
-                      />
+                    <Image
+                      src="/graduate_duck2.png"
+                      alt="Graduate Duck"
+                      width={300}
+                      height={300}
+                      priority
+                    />
                   </div>
-                  
+
                   {/* Message box - Hades style */}
                   <div className="relative z-10 bg-gradient-to-b from-amber-100 to-amber-50 border-4 border-amber-800 rounded-lg p-6 pt-12 shadow-2xl">
                     {/* Header banner */}
                     <div className="absolute top-0 left-0 right-0 bg-amber-800 text-amber-100 py-1 px-4 text-center font-bold tracking-wider text-sm border-b-2 border-amber-900">
                       RUBBER DUCK
                     </div>
-                    
+
                     {/* Decorative corners */}
                     <div className="absolute top-2 left-2 w-3 h-3 border-l-2 border-t-2 border-amber-900"></div>
                     <div className="absolute top-2 right-2 w-3 h-3 border-r-2 border-t-2 border-amber-900"></div>
                     <div className="absolute bottom-2 left-2 w-3 h-3 border-l-2 border-b-2 border-amber-900"></div>
                     <div className="absolute bottom-2 right-2 w-3 h-3 border-r-2 border-b-2 border-amber-900"></div>
-                    
+
                     {/* Message content */}
                     {msg.isLoading ? (
                       <div className="flex space-x-2 items-center">
-                        <div className="w-3 h-3 bg-amber-800 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
-                        <div className="w-3 h-3 bg-amber-800 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></div>
-                        <div className="w-3 h-3 bg-amber-800 rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></div>
+                        <div
+                          className="w-3 h-3 bg-amber-800 rounded-full animate-bounce"
+                          style={{ animationDelay: "0ms" }}
+                        ></div>
+                        <div
+                          className="w-3 h-3 bg-amber-800 rounded-full animate-bounce"
+                          style={{ animationDelay: "150ms" }}
+                        ></div>
+                        <div
+                          className="w-3 h-3 bg-amber-800 rounded-full animate-bounce"
+                          style={{ animationDelay: "300ms" }}
+                        ></div>
                       </div>
                     ) : (
                       <p className="text-gray-900 text-lg leading-relaxed font-serif whitespace-pre-wrap">
@@ -126,11 +207,36 @@ export default function Quacking() {
       <div className="bg-gray-900 border-t-2 border-amber-800 px-4 py-6">
         <div className="max-w-4xl mx-auto">
           <div className="flex gap-3">
+            {/* Microphone toggle for voice input */}
+            <button
+              type="button"
+              onClick={() => {
+                try {
+                  cancel();
+                } catch {}
+                if (listening) {
+                  stop();
+                } else {
+                  reset();
+                  start();
+                }
+              }}
+              title={listening ? "Stop listening" : "Start listening"}
+              className={`px-4 py-3 rounded-lg border-2 ${
+                listening
+                  ? "border-red-500 bg-red-600 text-white"
+                  : "border-amber-700 bg-amber-600 text-white"
+              } hover:brightness-110 transition`}
+            >
+              {listening ? "🎙️ Stop" : "🎤 Speak"}
+            </button>
             <input
               type="text"
               value={input}
               onChange={(e) => setInput(e.target.value)}
-              onKeyPress={(e) => e.key === 'Enter' && !e.shiftKey && handleSend()}
+              onKeyPress={(e) =>
+                e.key === "Enter" && !e.shiftKey && handleSend()
+              }
               placeholder="Explain a concept..."
               disabled={isLoading}
               className="flex-1 px-6 py-4 bg-gray-800 border-2 border-amber-700 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-amber-600 disabled:opacity-50 text-lg"
@@ -143,6 +249,9 @@ export default function Quacking() {
               →
             </button>
           </div>
+          {sttError && (
+            <div className="text-red-400 text-sm mt-2">{String(sttError)}</div>
+          )}
         </div>
       </div>
     </div>
