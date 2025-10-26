@@ -40,10 +40,17 @@ export default function Quacking() {
   // Map sentiment to duck image
   const getDuckImage = (sentiment) => {
     const sentimentLower = (sentiment || "neutral").toLowerCase();
-    
-    if (sentimentLower.includes("good") || sentimentLower.includes("positive")) {
+
+    if (
+      sentimentLower.includes("good") ||
+      sentimentLower.includes("positive")
+    ) {
       return "/adult_duck.png"; // Happy/successful duck
-    } else if (sentimentLower.includes("poor") || sentimentLower.includes("negative") || sentimentLower.includes("confused")) {
+    } else if (
+      sentimentLower.includes("poor") ||
+      sentimentLower.includes("negative") ||
+      sentimentLower.includes("confused")
+    ) {
       return "/child_duck.png"; // Confused duck (you'll need this image)
     } else {
       return "/graduate_duck2.png"; // Default/neutral duck
@@ -77,11 +84,11 @@ export default function Quacking() {
       const [data, sentimentData] = await Promise.all([
         askGemini(full_prompt, {
           max_tokens,
-          duck: "coding"
+          duck: "coding",
         }),
         analyzeSentiment(trimmed, {
           max_tokens,
-        })
+        }),
       ]);
 
       // Update sentiment
@@ -95,16 +102,16 @@ export default function Quacking() {
         const next = prev.slice();
         const last = next.length - 1;
         if (next[last]?.isLoading) {
-          next[last] = { 
-            role: "assistant", 
+          next[last] = {
+            role: "assistant",
             content: data.text,
-            sentiment: newSentiment 
+            sentiment: newSentiment,
           };
         } else {
-          next.push({ 
-            role: "assistant", 
+          next.push({
+            role: "assistant",
             content: data.text,
-            sentiment: newSentiment 
+            sentiment: newSentiment,
           });
         }
         return next;
@@ -175,25 +182,42 @@ export default function Quacking() {
           <h2 className="text-amber-400 font-bold text-xl">Code Editor</h2>
           {/* Sentiment indicator */}
           {sentiment && (
-            <div className={`px-4 py-2 rounded-lg font-semibold ${
-              sentiment.toLowerCase().includes("good") 
-                ? "bg-green-600 text-white" 
-                : sentiment.toLowerCase().includes("poor")
-                ? "bg-red-600 text-white"
-                : "bg-gray-600 text-white"
-            }`}>
+            <div
+              className={`px-4 py-2 rounded-lg font-semibold ${
+                sentiment.toLowerCase().includes("good")
+                  ? "bg-green-600 text-white"
+                  : sentiment.toLowerCase().includes("poor")
+                  ? "bg-red-600 text-white"
+                  : "bg-gray-600 text-white"
+              }`}
+            >
               Understanding: {sentiment}
             </div>
           )}
         </div>
         <div className="flex-1 p-4">
-          <textarea
-            value={code}
-            onChange={(e) => setCode(e.target.value)}
-            placeholder="Write or paste your code here..."
-            className="w-full h-full bg-gray-800 text-green-400 font-mono text-sm p-4 rounded-lg border-2 border-gray-700 focus:outline-none focus:ring-2 focus:ring-amber-600 resize-none"
-            spellCheck="false"
-          />
+          <div className="relative h-full w-full flex rounded-lg border-2 border-gray-700 bg-gray-800 overflow-hidden">
+            {/* Line numbers */}
+            <div className="bg-gray-900 text-gray-500 text-right px-3 py-4 select-none font-mono text-sm border-r border-gray-700">
+              {Array.from({ length: Math.max(1, code.split("\n").length) }).map(
+                (_, i) => (
+                  <div key={i} className="leading-6">
+                    {i + 1}
+                  </div>
+                )
+              )}
+            </div>
+
+            {/* Code textarea */}
+            <textarea
+              value={code}
+              onChange={(e) => setCode(e.target.value)}
+              placeholder="Write or paste your code here..."
+              className="flex-1 h-full bg-gray-800 text-green-400 font-mono text-sm p-4 focus:outline-none focus:ring-2 focus:ring-amber-600 resize-none"
+              spellCheck="false"
+              style={{ lineHeight: "1.5rem" }}
+            />
+          </div>
         </div>
       </div>
 
