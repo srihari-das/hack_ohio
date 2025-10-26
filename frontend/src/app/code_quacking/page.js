@@ -7,6 +7,9 @@ import { sttSupported, useSpeechToText } from "../lib/stt";
 import { speak, cancel, supported as ttsSupported } from "../lib/tts";
 import BackButton from "../components/BackButton";
 
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
+
 export default function Quacking() {
   const [messages, setMessages] = useState([]);
   const [sentiment, setSentiment] = useState("Neutral");
@@ -366,9 +369,11 @@ export default function Quacking() {
                           ></div>
                         </div>
                       ) : (
-                        <p className="text-gray-900 text-lg leading-relaxed font-serif whitespace-pre-wrap">
-                          {msg.content}
-                        </p>
+                        <div className="prose max-w-none text-gray-900 font-serif">
+                          <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                            {msg.content}
+                          </ReactMarkdown>
+                        </div>
                       )}
                     </div>
                   </div>
