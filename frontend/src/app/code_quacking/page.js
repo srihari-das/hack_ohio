@@ -5,6 +5,7 @@ import Image from "next/image";
 import { askGemini, analyzeSentiment } from "../api/client";
 import { sttSupported, useSpeechToText } from "../lib/stt";
 import { speak, cancel, supported as ttsSupported } from "../lib/tts";
+import BackButton from "../components/BackButton";
 
 export default function Quacking() {
   const [messages, setMessages] = useState([]);
@@ -170,22 +171,9 @@ export default function Quacking() {
 
   return (
     <div className="flex h-screen bg-gradient-to-b from-gray-900 to-gray-800">
-      {/* Left side - Code Editor */}
       <div className="w-1/2 border-r-2 border-amber-800 flex flex-col">
-        <div className="bg-gray-800 border-b-2 border-amber-800 px-6 py-4 flex justify-between items-center">
+        <div className="bg-gray-800 border-b-2 border-amber-800 px-6 py-6.5 flex items-center">
           <h2 className="text-amber-400 font-bold text-xl">Code Editor</h2>
-          {/* Sentiment indicator */}
-          {sentiment && (
-            <div className={`px-4 py-2 rounded-lg font-semibold ${
-              sentiment.toLowerCase().includes("good") 
-                ? "bg-green-600 text-white" 
-                : sentiment.toLowerCase().includes("poor")
-                ? "bg-red-600 text-white"
-                : "bg-gray-600 text-white"
-            }`}>
-              Understanding: {sentiment}
-            </div>
-          )}
         </div>
         <div className="flex-1 p-4">
           <textarea
@@ -200,6 +188,25 @@ export default function Quacking() {
 
       {/* Right side - Duck Dialogue */}
       <div className="w-1/2 flex flex-col">
+        {/* Header with back button and sentiment */}
+        <div className="bg-gray-800 border-b-2 border-amber-800 px-6 py-4 flex items-center justify-between">
+          <div className="flex items-center gap-4">
+            <BackButton />
+          </div>
+          
+          {/* Sentiment indicator */}
+          {sentiment && (
+            <div className={`px-4 py-2 rounded-lg font-semibold ${
+              sentiment.toLowerCase().includes("good") 
+                ? "bg-green-600 text-white" 
+                : sentiment.toLowerCase().includes("poor")
+                ? "bg-red-600 text-white"
+                : "bg-gray-600 text-white"
+            }`}>
+              Understanding: {sentiment}
+            </div>
+          )}
+        </div>
         {/* Messages */}
         <div className="flex-1 overflow-y-auto px-4 py-6">
           <div className="max-w-3xl mx-auto space-y-8">

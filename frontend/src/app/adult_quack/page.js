@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import { askGemini, analyzeSentiment } from "../api/client";
 import { sttSupported, useSpeechToText } from "../lib/stt";
+import BackButton from "../components/BackButton";
 import {
   speak,
   speakRealistic,
@@ -188,19 +189,28 @@ export default function Quacking() {
 
   return (
     <div className="flex flex-col h-screen bg-gradient-to-b from-gray-900 to-gray-800">
-      {/* Header with sentiment indicator */}
-      <div className="bg-gray-800 border-b-2 border-amber-800 px-6 py-4 flex justify-center items-center">
-        {sentiment && (
-          <div className={`px-4 py-2 rounded-lg font-semibold ${
-            sentiment.toLowerCase().includes("good") 
-              ? "bg-green-600 text-white" 
-              : sentiment.toLowerCase().includes("poor")
-              ? "bg-red-600 text-white"
-              : "bg-gray-600 text-white"
-          }`}>
-            Understanding: {sentiment}
-          </div>
-        )}
+      {/* Header*/}
+      <div className="bg-gray-900 border-b-2 border-amber-800 px-6 py-4 flex justify-between items-center">
+        {/* Back button - left aligned */}
+        <BackButton />
+        
+        {/* Sentiment indicator - centered */}
+        <div className="absolute left-1/2 transform -translate-x-1/2">
+          {sentiment && (
+            <div className={`px-4 py-2 rounded-lg font-semibold ${
+              sentiment.toLowerCase().includes("good") 
+                ? "bg-green-600 text-white" 
+                : sentiment.toLowerCase().includes("poor")
+                ? "bg-red-600 text-white"
+                : "bg-gray-600 text-white"
+            }`}>
+              Understanding: {sentiment}
+            </div>
+          )}
+        </div>
+  
+        {/* Empty spacer to balance the layout */}
+        <div className="w-[88px]"></div>
       </div>
 
       {/* Messages */}
