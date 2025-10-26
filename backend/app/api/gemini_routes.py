@@ -1,10 +1,16 @@
 import google.generativeai as genai
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel, Field
+from typing import List, Literal
 
 from app.config import settings
 
 router = APIRouter()
+
+
+class Message(BaseModel):
+    role: Literal["user", "model"]
+    content: str
 
 
 class GeminiPromptRequest(BaseModel):
@@ -14,6 +20,9 @@ class GeminiPromptRequest(BaseModel):
     )
     max_tokens: int | None = Field(
         default=None, ge=1, le=65536, description="Override max tokens for response"
+    )
+    history: List[Message] = Field(
+        default_factory=list, description="Conversation history"
     )
 
 
@@ -31,7 +40,14 @@ async def prompt_gemini(body: GeminiPromptRequest) -> GeminiPromptResponse:
     system_instruction = body.system or ""
 
     model = genai.GenerativeModel(model_name, system_instruction=system_instruction)
-    result = model.generate_content(body.prompt, generation_config=generation_config)  # type: ignore[arg-type]
+    
+    # Convert history to Gemini format and start chat
+    gemini_history = [
+        {"role": msg.role, "parts": [msg.content]}
+        for msg in body.history
+    ]
+    chat = model.start_chat(history=gemini_history)
+    result = chat.send_message(body.prompt, generation_config=generation_config)  # type: ignore[arg-type]
     
     # Debug: Print the full result structure
     print(f"Prompt feedback: {result.prompt_feedback}")

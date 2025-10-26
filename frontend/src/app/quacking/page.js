@@ -48,10 +48,19 @@ export default function Quacking() {
     setIsLoading(true);
 
     try {
+      // Build history from current messages (exclude the loading placeholder we just added)
+      const history = messages
+        .filter(msg => !msg.isLoading) // Exclude loading placeholders
+        .map(msg => ({
+          role: msg.role === "assistant" ? "model" : "user", // Convert to Gemini format
+          content: msg.content
+        }));
+
       const data = await askGemini(trimmed, {
         system:
-          "You are a helpful rubber duck assistant that asks Socratic questions to help users learn by explaining concepts. When a user explains something to you, ask thoughtful questions that guide them to deeper understanding. Be encouraging and curious.",
+          `You are a college student with a solid foundational understanding of your field. You will be discussing a topic with another student at your level. Your job is to answer questions thoughtfully, ask follow-up questions, and clarify your shared understanding — as if you were collaborating in a study session. Keep your tone conversational and intellectually curious, not overly formal or didactic. Example style: "That makes sense, but how does it connect to what we learned in class?" "I think it works because of X — does that line up with your understanding?"`,
         max_tokens,
+        history, // Send conversation history
       });
 
       // Replace the trailing placeholder with the actual response
@@ -102,7 +111,7 @@ export default function Quacking() {
     if (!input.trim()) return;
     const prompt = input;
     setInput("");
-    await sendPrompt(prompt, { max_tokens: 512 });
+    await sendPrompt(prompt, { max_tokens: 10000 });
   };
 
   // When speech recognition ends and we have an utterance, send it
@@ -114,7 +123,7 @@ export default function Quacking() {
 
     (async () => {
       try {
-        await sendPrompt(prompt, { max_tokens: 256 });
+        await sendPrompt(prompt, { max_tokens: 10000 });
       } finally {
         // clear transcript after sending; do not auto-restart here, user controls with mic
         try {
