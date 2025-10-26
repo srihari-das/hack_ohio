@@ -225,23 +225,6 @@ export default function Quacking() {
   return (
     <div className="flex h-screen bg-gradient-to-b from-gray-900 to-gray-800">
       <div className="w-1/2 border-r-2 border-amber-800 flex flex-col min-h-0 overflow-hidden">
-        <div className="bg-gray-800 border-b-2 border-amber-800 px-6 py-6.5 flex items-center">
-          <h2 className="text-amber-400 font-bold text-xl">Code Editor</h2>
-          {/* Sentiment indicator */}
-          {sentiment && (
-            <div
-              className={`px-4 py-2 rounded-lg font-semibold ${
-                sentiment.toLowerCase().includes("good")
-                  ? "bg-green-600 text-white"
-                  : sentiment.toLowerCase().includes("poor")
-                  ? "bg-red-600 text-white"
-                  : "bg-gray-600 text-white"
-              }`}
-            >
-              Understanding: {sentiment}
-            </div>
-          )}
-        </div>
         <div className="relative h-full w-full rounded-lg border-2 border-gray-700 bg-gray-800">
           <div className="flex h-full w-full">
             {/* Line numbers (no scrollbar; we sync to textarea) */}
