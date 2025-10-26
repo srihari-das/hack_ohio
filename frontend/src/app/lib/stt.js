@@ -113,12 +113,18 @@ export function useSpeechToText({
       interimResults,
       onStart: () => setListening(true),
       onInterim: (i) => setInterim(i),
-      onFinal: (f) => setFinalText((prev) => (prev ? prev + " " : "") + f),
+      onFinal: (f) => {
+        setFinalText((prev) => (prev ? prev + " " : "") + f);
+        setInterim(""); // avoid double-including the last interim after it becomes final
+      },
       onError: (e) => {
         setError(e?.error || e?.message || "recognition error");
         setListening(false);
       },
-      onEnd: () => setListening(false),
+      onEnd: () => {
+        setListening(false);
+        setInterim(""); // ensure cleared at end of session
+      },
     });
     recRef.current = recognition;
   };

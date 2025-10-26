@@ -18,11 +18,20 @@ export default function Quacking() {
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef(null);
+  const textareaRef = useRef(null);
 
   // Auto-scroll to bottom when messages change
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
+
+  // Auto-resize textarea based on content
+  useEffect(() => {
+    if (textareaRef.current) {
+      textareaRef.current.style.height = "auto";
+      textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
+    }
+  }, [input]);
 
   // Speech-to-Text: one-shot utterances; auto end when user pauses
   const {
@@ -53,11 +62,11 @@ export default function Quacking() {
     const sentimentLower = (sentiment || "neutral").toLowerCase();
     
     if (sentimentLower.includes("good") || sentimentLower.includes("positive")) {
-      return "/understanding_child_duck.png"; // Happy/successful duck
+      return "/understanding_grad_duck.png"; // Happy/successful duck
     } else if (sentimentLower.includes("poor") || sentimentLower.includes("negative") || sentimentLower.includes("confused")) {
-      return "/confused_child_duck.png"; // Confused duck
+      return "/confused_grad_duck.png"; // Confused duck
     } else {
-      return "/attentive_child_duck.png"; // Default/neutral duck
+      return "/attentive_grad_duck1.png"; // Default/neutral duck
     }
   };
 
@@ -92,7 +101,7 @@ export default function Quacking() {
         analyzeSentiment(trimmed, {
           max_tokens,
           history, // Send conversation history to sentiment analysis too
-          duck: "child", // Consistent duck parameter
+          duck: "grad" // Consistent duck parameter
         })
       ]);
 
@@ -296,7 +305,7 @@ export default function Quacking() {
       {/* Input - Fixed at bottom */}
       <div className="bg-gray-900 border-t-2 border-amber-800 px-4 py-6">
         <div className="max-w-4xl mx-auto">
-          <div className="flex gap-3">
+          <div className="flex gap-3 items-end">
             {/* Microphone toggle for voice input */}
             <button
               type="button"
@@ -316,11 +325,12 @@ export default function Quacking() {
                 listening
                   ? "border-red-500 bg-red-600 text-white"
                   : "border-amber-700 bg-amber-600 text-white"
-              } hover:brightness-110 transition`}
+              } hover:brightness-110 transition flex-shrink-0`}
             >
               {listening ? "🎙️ Stop" : "🎤 Speak"}
             </button>
             <textarea
+              ref={textareaRef}
               value={input}
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={(e) => {
@@ -331,13 +341,13 @@ export default function Quacking() {
               }}
               placeholder="Explain a concept..."
               disabled={isLoading}
-              rows={3}
-              className="flex-1 px-6 py-4 bg-gray-800 border-2 border-amber-700 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-amber-600 disabled:opacity-50 text-lg resize-none"
+              rows={1}
+              className="flex-1 px-6 py-4 bg-gray-800 border-2 border-amber-700 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-amber-600 disabled:opacity-50 text-lg resize-none overflow-hidden min-h-[56px] max-h-[200px]"
             />
             <button
               onClick={handleSend}
               disabled={!input.trim() || isLoading}
-              className="px-8 py-4 bg-amber-700 hover:bg-amber-600 text-white font-bold rounded-lg disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-lg border-2 border-amber-800"
+              className="px-8 py-4 bg-amber-700 hover:bg-amber-600 text-white font-bold rounded-lg disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-lg border-2 border-amber-800 flex-shrink-0"
             >
               →
             </button>
