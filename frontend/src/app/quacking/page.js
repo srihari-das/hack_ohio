@@ -2,7 +2,7 @@
 "use client";
 import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
-import { askGemini } from "../api/client";
+import { askGemini, analyzeSentiment } from "../api/client";
 import { sttSupported, useSpeechToText } from "../lib/stt";
 import {
   speak,
@@ -13,6 +13,7 @@ import {
 
 export default function Quacking() {
   const [messages, setMessages] = useState([]);
+  const [sentiment, setSentiment] = useState("Neutral");
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef(null);
@@ -46,6 +47,19 @@ export default function Quacking() {
     }
   }, [listening]);
 
+  // Map sentiment to duck image
+  const getDuckImage = (sentiment) => {
+    const sentimentLower = (sentiment || "neutral").toLowerCase();
+    
+    if (sentimentLower.includes("good") || sentimentLower.includes("positive")) {
+      return "/understanding_grad_duck.png"; // Happy/successful duck
+    } else if (sentimentLower.includes("poor") || sentimentLower.includes("negative") || sentimentLower.includes("confused")) {
+      return "/confused_grad_duck.png"; // Confused duck
+    } else {
+      return "/attentive_grad_duck1.png"; // Default/neutral duck
+    }
+  };
+
   const sendPrompt = async (prompt, { max_tokens = 4096 } = {}) => {
     const trimmed = (prompt || "").trim();
     if (!trimmed) return;
@@ -67,11 +81,23 @@ export default function Quacking() {
           content: msg.content,
         }));
 
-      const data = await askGemini(trimmed, {
-        system: `You are a college student with a solid foundational understanding of your field. You will be discussing a topic with another student at your level. Your job is to answer questions thoughtfully, ask follow-up questions, and clarify your shared understanding — as if you were collaborating in a study session. Keep your tone conversational and intellectually curious, not overly formal or didactic. Example style: "That makes sense, but how does it connect to what we learned in class?" "I think it works because of X — does that line up with your understanding?"`,
-        max_tokens,
-        history, // Send conversation history
-      });
+      // Get both responses in parallel
+      const [data, sentimentData] = await Promise.all([
+        askGemini(trimmed, {
+          system: `You are a college student with a solid foundational understanding of your field. You will be discussing a topic with another student at your level. Your job is to answer questions thoughtfully, ask follow-up questions, and clarify your shared understanding — as if you were collaborating in a study session. Keep your tone conversational and intellectually curious, not overly formal or didactic. Example style: "That makes sense, but how does it connect to what we learned in class?" "I think it works because of X — does that line up with your understanding?"`,
+          max_tokens,
+          history,
+          duck: "grad" // Pass duck parameter for study session
+        }),
+        analyzeSentiment(trimmed, {
+          max_tokens,
+        })
+      ]);
+
+      // Update sentiment
+      const newSentiment = sentimentData.sentiment || "Neutral";
+      console.log("Sentiment analyzed:", newSentiment);
+      setSentiment(newSentiment);
 
       // Replace the trailing placeholder with the actual response
       setMessages((prev) => {
@@ -79,9 +105,17 @@ export default function Quacking() {
         const next = prev.slice();
         const last = next.length - 1;
         if (next[last]?.isLoading) {
-          next[last] = { role: "assistant", content: data.text };
+          next[last] = { 
+            role: "assistant", 
+            content: data.text,
+            sentiment: newSentiment 
+          };
         } else {
-          next.push({ role: "assistant", content: data.text });
+          next.push({ 
+            role: "assistant", 
+            content: data.text,
+            sentiment: newSentiment 
+          });
         }
         return next;
       });
@@ -153,6 +187,21 @@ export default function Quacking() {
 
   return (
     <div className="flex flex-col h-screen bg-gradient-to-b from-gray-900 to-gray-800">
+      {/* Header with sentiment indicator */}
+      <div className="bg-gray-800 border-b-2 border-amber-800 px-6 py-4 flex justify-center items-center">
+        {sentiment && (
+          <div className={`px-4 py-2 rounded-lg font-semibold ${
+            sentiment.toLowerCase().includes("good") 
+              ? "bg-green-600 text-white" 
+              : sentiment.toLowerCase().includes("poor")
+              ? "bg-red-600 text-white"
+              : "bg-gray-600 text-white"
+          }`}>
+            Understanding: {sentiment}
+          </div>
+        )}
+      </div>
+
       {/* Messages */}
       <div className="flex-1 overflow-y-auto px-4 py-6">
         <div className="max-w-4xl mx-auto space-y-8">
@@ -180,8 +229,8 @@ export default function Quacking() {
                   {/* Duck character image - behind and slightly transparent */}
                   <div className="flex justify-center mb-[-60px] relative z-0 opacity-70">
                     <Image
-                      src="/graduate_duck2.png"
-                      alt="Graduate Duck"
+                      src={getDuckImage(msg.sentiment || sentiment)}
+                      alt="Duck"
                       width={300}
                       height={300}
                       priority
