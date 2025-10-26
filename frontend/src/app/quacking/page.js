@@ -35,7 +35,7 @@ export default function Quacking() {
     }
   }, [listening]);
 
-  const sendPrompt = async (prompt, { max_tokens = 512 } = {}) => {
+  const sendPrompt = async (prompt, { max_tokens = 4096 } = {}) => {
     const trimmed = (prompt || "").trim();
     if (!trimmed) return;
 
