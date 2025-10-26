@@ -5,7 +5,6 @@ import Image from 'next/image';
 export default function CodeDuckButtton() {
     const handleButtonClick = () => {
     console.log('Button clicked');
-    alert('Quack!');
     };
 
     return (
